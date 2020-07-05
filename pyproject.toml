@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "coverage-plot"
+version = "1.0.0"
+description = "Library to plot Python code coverage results"
+readme = "README.md"
+homepage = "https://github.com/imankulov/coverage-plot"
+repository = "https://github.com/imankulov/coverage-plot"
+authors = ["Roman Imankulov <roman.imankulov@gmail.com>"]
+license = "MIT"
+classifiers = [
+    "Intended Audience :: Developers",
+]
+include = [
+    "CHANGELOG.md"
+]
+
+
+[tool.poetry.scripts]
+coverage-plot = "coverage_plot.cli:coverage_plot"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+plotly = "^4.8.2"
+pandas = "^1.0.5"
+attrs = "^19.3.0"
+click = "^7.1.2"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.3.2"
+black = "^19.10b0"
+flake8 = "^3.7.9"
+mypy = "^0.782"
+
+[build-system]
+requires = ["poetry>=1.0.5"]
+build-backend = "poetry.masonry.api"
