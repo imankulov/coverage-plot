@@ -1,6 +1,7 @@
 import json
 import os
 from typing import Dict
+from xml.etree import ElementTree as ET
 
 import attr
 import pandas as pd
@@ -24,7 +25,32 @@ def import_dict(raw_report: Dict) -> Report:
     for filename, raw_coverage in raw_report["files"].items():
         coverage = FileCoverage.from_dict(raw_coverage)
         if coverage.total_lines() > 0:
-            report[filename] = FileCoverage.from_dict(raw_coverage)
+            report[filename] = coverage
+    return report
+
+
+def import_xml(content: str) -> Report:
+
+    report: Report = {}
+
+    def is_covered(line_tag):
+        return line_tag.attrib["hits"] != "0"
+
+    tree = ET.fromstring(content)
+    source = str(tree.findtext("sources/source"))
+    if not source:
+        source = ""
+    root = os.path.basename(source)
+    for tag in tree.iter("class"):
+        filename = os.path.join(root, tag.attrib["filename"])
+        line_tags = tag.findall("lines/line")
+        covered_lines = sum([1 for line in line_tags if is_covered(line)], 0)
+        missing_lines = sum([1 for line in line_tags if not is_covered(line)], 0)
+        coverage = FileCoverage(
+            covered_lines=covered_lines, missing_lines=missing_lines
+        )
+        if coverage.total_lines() > 0:
+            report[filename] = coverage
     return report
 
 

@@ -4,6 +4,7 @@ from coverage_plot.plot import (
     FileCoverage,
     export_df,
     import_json,
+    import_xml,
     make_path_components,
     plot_sunburst,
 )
@@ -33,6 +34,38 @@ def test_json_importer():
     assert "foo.py" in report
     assert report["foo.py"].percent_covered() == 40.0
     assert report["foo.py"].total_lines() == 5
+
+
+def test_xml_importer():
+    xml_report = """
+    <?xml version="1.0" encoding="UTF-8"?>
+    <coverage>
+        <sources>
+            <source>/app/foo</source>
+        </sources>
+        <packages>
+            <package>
+                <classes>
+                    <class filename="app/views.py">
+                        <methods/>
+                        <lines>
+                            <line hits="1" number="1"/>
+                            <line hits="1" number="2"/>
+                            <line hits="1" number="3"/>
+                            <line hits="0" number="4"/>
+                            <line hits="0" number="5"/>
+                            <line hits="0" number="6"/>
+                        </lines>
+                    </class>
+                </classes>
+            </package>
+        </packages>
+    </coverage>
+    """.strip()
+    report = import_xml(xml_report)
+    assert "foo/app/views.py" in report
+    assert report["foo/app/views.py"].percent_covered() == 50.0
+    assert report["foo/app/views.py"].total_lines() == 6
 
 
 def test_make_path_components():
