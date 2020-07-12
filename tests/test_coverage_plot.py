@@ -1,5 +1,6 @@
 import pandas as pd
 
+from coverage_plot.importance_filesize import FileSizeImportance
 from coverage_plot.plot import (
     FileCoverage,
     export_df,
@@ -76,12 +77,13 @@ def test_make_path_components():
 
 def test_export_df():
     report = {"app/foo.py": FileCoverage(1, 1), "app/bar.py": FileCoverage(2, 2)}
-    df = export_df(report)
+    importance = FileSizeImportance(report)
+    df = export_df(report, importance)
     assert list(df.columns) == [
         "path",
         "name",
-        "total_lines",
         "percent_covered",
+        "importance",
     ]
 
 
@@ -93,5 +95,6 @@ def test_sunburst():
         "app/views/bar.py": FileCoverage(10, 20),
         "app/views/spam.py": FileCoverage(100, 90),
     }
-    figure = plot_sunburst(report)
+    importance = FileSizeImportance(report)
+    figure = plot_sunburst(report, importance)
     assert figure.data[0].type == "sunburst"

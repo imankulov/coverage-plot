@@ -8,6 +8,8 @@ import pandas as pd
 import plotly.express as px
 from plotly.graph_objs import Figure
 
+from coverage_plot.importance_interface import Importance
+
 # Coverare Report, where str is a filename, and "FileCoverage"
 # is the coverage result
 Report = Dict[str, "FileCoverage"]
@@ -24,13 +26,11 @@ def import_dict(raw_report: Dict) -> Report:
     report: Report = {}
     for filename, raw_coverage in raw_report["files"].items():
         coverage = FileCoverage.from_dict(raw_coverage)
-        if coverage.total_lines() > 0:
-            report[filename] = coverage
+        report[filename] = coverage
     return report
 
 
 def import_xml(content: str) -> Report:
-
     report: Report = {}
 
     def is_covered(line_tag):
@@ -49,14 +49,13 @@ def import_xml(content: str) -> Report:
         coverage = FileCoverage(
             covered_lines=covered_lines, missing_lines=missing_lines
         )
-        if coverage.total_lines() > 0:
-            report[filename] = coverage
+        report[filename] = coverage
     return report
 
 
-def export_df(report: Report) -> pd.DataFrame:
+def export_df(report: Report, importance: Importance) -> pd.DataFrame:
     """
-    Covert Report object to a pandas DataFrame.
+    Covert Report and Importance objects to a pandas DataFrame.
 
     The DataFrame object has the following fields:
 
@@ -69,11 +68,14 @@ def export_df(report: Report) -> pd.DataFrame:
     for filename, coverage in report.items():
         if filename == "":
             continue
+        imp = importance.get_importance(filename)
+        if imp == 0:
+            continue
         record = {
             "path": filename,
             "name": os.path.basename(filename),
-            "total_lines": coverage.total_lines(),
             "percent_covered": coverage.percent_covered(),
+            "importance": imp,
         }
         records.append(record)
 
@@ -114,32 +116,32 @@ class FileCoverage:
         return 100.0 * self.covered_lines / covered_and_missing
 
 
-def plot_sunburst(report: Report) -> Figure:
+def plot_sunburst(report: Report, importance: Importance) -> Figure:
     """Return a sunburst Figure object from a report."""
-    df = export_df(report)
+    df = export_df(report, importance)
     path_components = make_path_components(df)
     summary = pd.concat([df, path_components], axis=1)
     return px.sunburst(
         summary,
         names="name",
         path=path_components.columns,
-        values="total_lines",
+        values="importance",
         color="percent_covered",
         color_continuous_scale="RdYlGn",
         range_color=[0, 100],
     )
 
 
-def plot_treemap(report: Report):
+def plot_treemap(report: Report, importance: Importance):
     """Return a treemap Figure object from a report."""
-    df = export_df(report)
+    df = export_df(report, importance)
     path_components = make_path_components(df)
     summary = pd.concat([df, path_components], axis=1)
     return px.treemap(
         summary,
         names="name",
         path=path_components.columns,
-        values="total_lines",
+        values="importance",
         color="percent_covered",
         color_continuous_scale="RdYlGn",
         range_color=[0, 100],
