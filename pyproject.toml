@@ -24,13 +24,20 @@ plotly = "^4.8.2"
 pandas = "^1.0.5"
 attrs = "^19.3.0"
 click = "^7.1.2"
+pydriller = "^1.15.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.3.2"
 black = "^19.10b0"
 flake8 = "^3.7.9"
 mypy = "^0.782"
+coverage = {extras = ["toml"], version = "^5.2"}
+ipython = "^7.16.1"
+faker = "^4.1.1"
+pdbpp = "^0.10.2"
 
+[tool.coverage.run]
+source = ["coverage_plot"]
 [build-system]
 requires = ["poetry>=1.0.5"]
 build-backend = "poetry.masonry.api"
