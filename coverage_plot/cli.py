@@ -10,7 +10,7 @@ from coverage_plot.importance_recency import GitImportance
 @click.command()
 @click.option(
     "--plot-type",
-    default="sunburst",
+    default="treemap",
     type=click.Choice(["sunburst", "treemap"]),
     help="Set the plot type",
 )
