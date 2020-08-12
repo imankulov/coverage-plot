@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "coverage-plot"
-version = "1.0.0"
+version = "0.1.0"
 description = "Library to plot Python code coverage results"
 readme = "README.md"
 homepage = "https://github.com/imankulov/coverage-plot"
