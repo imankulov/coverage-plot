@@ -26,6 +26,12 @@ attrs = "^19.3.0"
 click = "^7.1.2"
 pydriller = "^1.15.2"
 
+[tool.poetry.dependencies]
+sphinx = {version = "^3", optional = true}
+
+[tool.poetry.extras]
+docs = ["sphinx"]
+
 [tool.poetry.dev-dependencies]
 pytest = "^5.3.2"
 black = "^19.10b0"
