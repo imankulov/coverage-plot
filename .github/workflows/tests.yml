@@ -33,3 +33,11 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           bash <(curl -s https://codecov.io/bash)
+      - name: Install coveralls
+        run: |
+          pip3 install --upgrade "coveralls" "coverage[toml]"
+      - name: Upload coverage.xml to coveralls
+        run: |
+          coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
