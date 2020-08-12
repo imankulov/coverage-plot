@@ -23,4 +23,13 @@ jobs:
       - name: Test with pytest
         run: |
           set -ex
-          $HOME/.poetry/bin/poetry run pytest
+          $HOME/.poetry/bin/poetry run coverage run -m pytest
+      - name: Create coverage.xml
+        run: |
+          set -ex
+          $HOME/.poetry/bin/poetry run coverage xml
+      - name: Upload coverage.xml to codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          bash <(curl -s https://codecov.io/bash)
