@@ -35,9 +35,11 @@ coverage = {extras = ["toml"], version = "^5.2"}
 ipython = "^7.16.1"
 faker = "^4.1.1"
 pdbpp = "^0.10.2"
+sphinx = "^3.1.2"
 
 [tool.coverage.run]
 source = ["coverage_plot"]
+
 [build-system]
 requires = ["poetry>=1.0.5"]
 build-backend = "poetry.masonry.api"
