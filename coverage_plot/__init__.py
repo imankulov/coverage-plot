@@ -1,6 +1,4 @@
-import pkg_resources
-
 from coverage_plot.plot import import_json, import_xml, plot_sunburst, plot_treemap
 
-__version__ = pkg_resources.get_distribution("coverage-plot").version
+__version__ = "0.1.0"
 __all__ = ["import_json", "import_xml", "plot_sunburst", "plot_treemap", "__version__"]
