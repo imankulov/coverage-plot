@@ -5,8 +5,8 @@ from xml.etree import ElementTree as ET
 
 import pandas as pd
 import plotly.express as px
-from plotly.graph_objs import Figure
 from attrs import frozen
+from plotly.graph_objs import Figure
 
 from coverage_plot.importance_interface import Importance
 
@@ -79,7 +79,10 @@ def export_df(report: Report, importance: Importance) -> pd.DataFrame:
         }
         records.append(record)
 
-    records = sorted(records, key=lambda k: k["path"])
+    def _sorter(record_: Dict) -> str:
+        return record_["path"]
+
+    records = sorted(records, key=_sorter)
     return pd.DataFrame(records)
 
 

@@ -1,9 +1,10 @@
-import datetime
-from typing import List
-
-import attr
 import faker
 
+from coverage_plot.fake_implementations import (
+    FakeCommit,
+    FakeDeveloper,
+    FakeModification,
+)
 from coverage_plot.git_changes import (
     ExcludeAllModifications,
     ExcludeAuthor,
@@ -15,52 +16,6 @@ from coverage_plot.git_changes import (
     apply_modification_filters,
     filter_modifications,
 )
-
-fake = faker.Faker()
-
-
-@attr.s(auto_attribs=True, frozen=True)
-class FakeDeveloper:
-    """
-    Fake object implementing the subset of the interface of pydriller's Developer.
-
-    Ref: https://pydriller.readthedocs.io/en/latest/commit.html
-    """
-
-    name: str = attr.ib(factory=fake.name)
-    email: str = attr.ib(factory=fake.email)
-
-
-@attr.s(auto_attribs=True, frozen=True)
-class FakeModification:
-    """
-    Fake object implementing the subset of the interface of pydriller's Modification.
-
-    Ref: https://pydriller.readthedocs.io/en/latest/modifications.html
-    """
-
-    path: str = attr.ib(factory=fake.file_path)
-
-    @property
-    def old_path(self):
-        return self.path
-
-    @property
-    def new_path(self):
-        return self.path
-
-
-@attr.s(auto_attribs=True, frozen=True)
-class FakeCommit:
-    """
-    Fake object implementing the subset of the interface of pydriller's Commit.
-    """
-
-    author: FakeDeveloper = attr.ib(factory=FakeDeveloper)
-    author_date: datetime.datetime = attr.ib(factory=fake.date_time_this_year)
-    msg: str = attr.ib(factory=fake.sentence)
-    hash: str = attr.ib(factory=fake.sha1)
-    modifications: List[FakeModification] = attr.ib(factory=list)
 
 
 def test_include_file_include():
