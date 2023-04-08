@@ -2,11 +2,22 @@ import abc
 import enum
 import fnmatch
 from datetime import datetime, timezone
-from typing import Generator, Iterator, List, Optional
+from typing import Generator, Iterator, List, Optional, Union
 
-from attrs import frozen
 import pydriller
+from attrs import frozen
 from pydriller import Commit, Modification
+from pydriller.domain.developer import Developer
+
+from coverage_plot.fake_implementations import (
+    FakeCommit,
+    FakeDeveloper,
+    FakeModification,
+)
+
+DeveloperT = Union[Developer, FakeDeveloper]
+CommitT = Union[Commit, FakeCommit]
+ModificationT = Union[Modification, FakeModification]
 
 
 class FilterResult(enum.Enum):
@@ -25,7 +36,7 @@ class NormalizedModification:
     path: str
 
     @classmethod
-    def from_commit_modification(cls, commit: Commit, modification: Modification):
+    def from_commit_modification(cls, commit: CommitT, modification: ModificationT):
         return NormalizedModification(
             hash=commit.hash,
             msg=commit.msg,
@@ -39,12 +50,14 @@ class NormalizedModification:
 
 
 class CommitFilter(abc.ABC):
-    def filter_commit(self, commit: Commit) -> FilterResult:
+    @abc.abstractmethod
+    def filter_commit(self, commit: CommitT) -> FilterResult:
         ...
 
 
 class ModificationFilter(abc.ABC):
-    def filter_modification(self, modification: Modification) -> FilterResult:
+    @abc.abstractmethod
+    def filter_modification(self, modification: ModificationT) -> FilterResult:
         ...
 
 
@@ -52,7 +65,7 @@ class ModificationFilter(abc.ABC):
 class ExcludeAuthor(CommitFilter):
     author_name: str
 
-    def filter_commit(self, commit: Commit) -> FilterResult:
+    def filter_commit(self, commit: CommitT) -> FilterResult:
         if self.author_name in commit.author.name:
             return FilterResult.EXCLUDE
         if self.author_name in commit.author.email:
@@ -64,7 +77,7 @@ class ExcludeAuthor(CommitFilter):
 class ExcludeMessage(CommitFilter):
     message: str
 
-    def filter_commit(self, commit: Commit) -> FilterResult:
+    def filter_commit(self, commit: CommitT) -> FilterResult:
         if self.message in commit.msg:
             return FilterResult.EXCLUDE
         return FilterResult.DONT_KNOW
@@ -72,22 +85,21 @@ class ExcludeMessage(CommitFilter):
 
 @frozen
 class ExcludeAllCommits(CommitFilter):
-    def filter_commit(self, commit: Commit) -> FilterResult:
+    def filter_commit(self, commit: CommitT) -> FilterResult:
         return FilterResult.EXCLUDE
 
 
 @frozen
 class IncludeAllCommits(CommitFilter):
-    def filter_commit(self, commit: Commit) -> FilterResult:
+    def filter_commit(self, commit: CommitT) -> FilterResult:
         return FilterResult.INCLUDE
 
 
 @frozen
 class IncludeFile(ModificationFilter):
-
     file_pattern: str
 
-    def filter_modification(self, modification: Modification) -> FilterResult:
+    def filter_modification(self, modification: ModificationT) -> FilterResult:
         path = modification.old_path or modification.new_path
         if fnmatch.fnmatch(path, self.file_pattern):
             return FilterResult.INCLUDE
@@ -103,7 +115,7 @@ class ExcludeAllModifications(ModificationFilter):
     "exclude the modification."
     """
 
-    def filter_modification(self, modification: Modification) -> FilterResult:
+    def filter_modification(self, modification: ModificationT) -> FilterResult:
         return FilterResult.EXCLUDE
 
 
@@ -116,7 +128,7 @@ class IncludeAllModifications(ModificationFilter):
     "include the modification."
     """
 
-    def filter_modification(self, modification: Modification) -> FilterResult:
+    def filter_modification(self, modification: ModificationT) -> FilterResult:
         return FilterResult.INCLUDE
 
 
@@ -152,7 +164,7 @@ def filter_modifications(
             yield NormalizedModification.from_commit_modification(commit, mod)
 
 
-def apply_commit_filters(commit: Commit, commit_filters: List[CommitFilter]):
+def apply_commit_filters(commit: CommitT, commit_filters: List[CommitFilter]):
     for filt in commit_filters:
         result = filt.filter_commit(commit)
         if result in (FilterResult.INCLUDE, FilterResult.EXCLUDE):
@@ -161,7 +173,7 @@ def apply_commit_filters(commit: Commit, commit_filters: List[CommitFilter]):
 
 
 def apply_modification_filters(
-    modification: Modification, modification_filters: List[ModificationFilter]
+    modification: ModificationT, modification_filters: List[ModificationFilter]
 ):
     for filt in modification_filters:
         result = filt.filter_modification(modification)

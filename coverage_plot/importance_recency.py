@@ -91,6 +91,7 @@ def convert_to_last_modified(
     last_modified_dict: Dict[str, datetime] = {}
     for mod in modifications:
         last_modified_dict[mod.path] = cast(
-            datetime, max(mod.author_date, last_modified_dict.get(mod.path, sentinel)),
+            datetime,
+            max(mod.author_date, last_modified_dict.get(mod.path, sentinel)),
         )
     return last_modified_dict

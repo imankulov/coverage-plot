@@ -9,8 +9,8 @@ class Importance(abc.ABC):
     an importance score for it.
     """
 
+    @abc.abstractmethod
     def get_importance(self, filename: str) -> int:
         """
         Return an importance score for a file.
         """
-        ...

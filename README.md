@@ -12,7 +12,7 @@ A library and a script to plot Python code coverage results.
 Run the tests for your project with the test coverage, and convert the coverage results to a JSON or XML format. As a result, you should find a coverage.json or coverage.xml file in your current working directory.
 
 ```
-coverage run pytest
+coverage run -m pytest
 coverage xml  # or coverage json
 ```
 

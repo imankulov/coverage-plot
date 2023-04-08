@@ -1,6 +1,7 @@
+from attrs import define
+
 from coverage_plot.importance_interface import Importance
 from coverage_plot.plot import Report
-from attrs import define
 
 
 @define
