@@ -1,10 +1,9 @@
-import attr
-
 from coverage_plot.importance_interface import Importance
 from coverage_plot.plot import Report
+from attrs import define
 
 
-@attr.s(auto_attribs=True)
+@define
 class FileSizeImportance(Importance):
     """Get file importance based on the file size, as taken from the coverage report."""
 

@@ -4,7 +4,7 @@ import fnmatch
 from datetime import datetime, timezone
 from typing import Generator, Iterator, List, Optional
 
-import attr
+from attrs import frozen
 import pydriller
 from pydriller import Commit, Modification
 
@@ -15,13 +15,13 @@ class FilterResult(enum.Enum):
     DONT_KNOW = "DONT_KNOW"
 
 
-@attr.s(auto_attribs=True, frozen=True)
+@frozen
 class NormalizedModification:
     hash: str
     msg: str
     author_name: str
     author_email: str
-    author_date: str
+    author_date: datetime
     path: str
 
     @classmethod
@@ -48,7 +48,7 @@ class ModificationFilter(abc.ABC):
         ...
 
 
-@attr.s(auto_attribs=True, frozen=True)
+@frozen
 class ExcludeAuthor(CommitFilter):
     author_name: str
 
@@ -60,7 +60,7 @@ class ExcludeAuthor(CommitFilter):
         return FilterResult.DONT_KNOW
 
 
-@attr.s(auto_attribs=True, frozen=True)
+@frozen
 class ExcludeMessage(CommitFilter):
     message: str
 
@@ -70,19 +70,19 @@ class ExcludeMessage(CommitFilter):
         return FilterResult.DONT_KNOW
 
 
-@attr.s(auto_attribs=True, frozen=True)
+@frozen
 class ExcludeAllCommits(CommitFilter):
     def filter_commit(self, commit: Commit) -> FilterResult:
         return FilterResult.EXCLUDE
 
 
-@attr.s(auto_attribs=True, frozen=True)
+@frozen
 class IncludeAllCommits(CommitFilter):
     def filter_commit(self, commit: Commit) -> FilterResult:
         return FilterResult.INCLUDE
 
 
-@attr.s(auto_attribs=True, frozen=True)
+@frozen
 class IncludeFile(ModificationFilter):
 
     file_pattern: str
@@ -94,7 +94,7 @@ class IncludeFile(ModificationFilter):
         return FilterResult.DONT_KNOW
 
 
-@attr.s(auto_attribs=True, frozen=True)
+@frozen
 class ExcludeAllModifications(ModificationFilter):
     """
     Catch-all filter to exclude all modifications.
@@ -107,7 +107,7 @@ class ExcludeAllModifications(ModificationFilter):
         return FilterResult.EXCLUDE
 
 
-@attr.s(auto_attribs=True, frozen=True)
+@frozen
 class IncludeAllModifications(ModificationFilter):
     """
     Catch-all filter to incldue all modifications.

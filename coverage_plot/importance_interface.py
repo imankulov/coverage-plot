@@ -5,7 +5,7 @@ class Importance(abc.ABC):
     """
     Generic interface for importance metrics.
 
-    Subclassess of Importance implement a method that takes the filename, and return
+    Subclasses of Importance implement a method that takes the filename, and return
     an importance score for it.
     """
 

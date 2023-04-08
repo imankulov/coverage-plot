@@ -3,14 +3,14 @@ import os
 from typing import Dict
 from xml.etree import ElementTree as ET
 
-import attr
 import pandas as pd
 import plotly.express as px
 from plotly.graph_objs import Figure
+from attrs import frozen
 
 from coverage_plot.importance_interface import Importance
 
-# Coverare Report, where str is a filename, and "FileCoverage"
+# Coverage Report, where str is a filename, and "FileCoverage"
 # is the coverage result
 Report = Dict[str, "FileCoverage"]
 
@@ -95,7 +95,7 @@ def make_path_components(report_df: pd.DataFrame) -> pd.DataFrame:
     return report_df["path"].apply(splitter)
 
 
-@attr.s(frozen=True, auto_attribs=True)
+@frozen
 class FileCoverage:
     covered_lines: int = 0
     missing_lines: int = 0

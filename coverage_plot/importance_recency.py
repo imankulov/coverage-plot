@@ -2,7 +2,7 @@ import os
 from datetime import MINYEAR, datetime, timedelta
 from typing import Dict, Iterator, List, cast
 
-import attr
+from attrs import define, field
 
 from coverage_plot.git_changes import (
     CommitFilter,
@@ -22,10 +22,10 @@ def year_ago():
     return datetime.utcnow() - timedelta(days=365)
 
 
-@attr.s(auto_attribs=True)
+@define
 class GitImportance(Importance):
     git_root: str
-    commit_filters: List[CommitFilter] = attr.ib(
+    commit_filters: List[CommitFilter] = field(
         factory=lambda: [
             ExcludeAuthor("bot"),
             ExcludeMessage("yapf"),
@@ -33,11 +33,11 @@ class GitImportance(Importance):
             IncludeAllCommits(),
         ]
     )
-    modification_filters: List[ModificationFilter] = attr.ib(
+    modification_filters: List[ModificationFilter] = field(
         factory=lambda: [IncludeFile("*.py"), ExcludeAllModifications()]
     )
-    since: datetime = attr.ib(factory=year_ago)
-    last_modified_dict: Dict[str, datetime] = attr.ib(
+    since: datetime = field(factory=year_ago)
+    last_modified_dict: Dict[str, datetime] = field(
         factory=dict, init=False, repr=False
     )
 
