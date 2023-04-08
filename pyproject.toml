@@ -9,6 +9,13 @@ authors = ["Roman Imankulov <roman.imankulov@gmail.com>"]
 license = "MIT"
 classifiers = [
     "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
 ]
 include = [
     "CHANGELOG.md"
@@ -20,12 +27,12 @@ coverage-plot = "coverage_plot.cli:coverage_plot"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-plotly = "^4.8.2"
+plotly = "^5"
 pandas = "^1.0.5"
-attrs = "^19.3.0"
+attrs = ">=21.1.0"
 click = "^8.1.2"
 pydriller = "^1.15.2"
-sphinx = {version = "^3", optional = true}
+sphinx = { version = "^3", optional = true }
 
 [tool.poetry.extras]
 docs = ["sphinx"]
@@ -35,7 +42,7 @@ pytest = "^5.3.2"
 black = "^19.10b0"
 flake8 = "^3.7.9"
 mypy = "^0.782"
-coverage = {extras = ["toml"], version = "^5.2"}
+coverage = { extras = ["toml"], version = "^5.2" }
 ipython = "^7.16.1"
 faker = "^4.1.1"
 pdbpp = "^0.10.2"
