@@ -26,7 +26,7 @@ include = [
 coverage-plot = "coverage_plot.cli:coverage_plot"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8.1"
 plotly = "^5"
 pandas = "^1.0.5"
 attrs = ">=21.1.0"
@@ -37,16 +37,13 @@ sphinx = { version = "^3", optional = true }
 [tool.poetry.extras]
 docs = ["sphinx"]
 
-[tool.poetry.dev-dependencies]
-pytest = "^5.3.2"
-black = "^19.10b0"
-flake8 = "^3.7.9"
-mypy = "^0.782"
-coverage = { extras = ["toml"], version = "^5.2" }
-ipython = "^7.16.1"
-faker = "^4.1.1"
-pdbpp = "^0.10.2"
-sphinx = "^3.1.2"
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.2"
+black = "^23.3.0"
+flake8 = "^6.0.0"
+mypy = "^1.2.0"
+coverage = {extras = ["toml"], version = "^7.2.3"}
+faker = "^18.4.0"
 
 [tool.coverage.run]
 source = ["coverage_plot"]
