@@ -3,41 +3,43 @@ name: tests
 on: [push]
 
 jobs:
-  build-test:
-    runs-on: ubuntu-latest
+  test:
+    strategy:
+      matrix:
+        python-versions: ["3.8", "3.9", "3.10", "3.11"]
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.8"
+          python-version: ${{ matrix.python-versions }}
       - name: Install dependencies
         run: |
           set -ex
-          curl -O -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py
-          python get-poetry.py --yes
-          rm -f get-poetry.py
-          $HOME/.poetry/bin/poetry install
+          curl -sSL https://install.python-poetry.org | python3 -
+          $HOME/.local/bin/poetry install
       - name: Test with pytest
         run: |
           set -ex
-          $HOME/.poetry/bin/poetry run coverage run -m pytest
+          $HOME/.local/bin/poetry run coverage run -m pytest
       - name: Create coverage.xml
         run: |
           set -ex
-          $HOME/.poetry/bin/poetry run coverage xml
-      - name: Upload coverage.xml to codecov
+          $HOME/.local/bin/poetry run coverage xml
+      - name: Upload coverage.xml to codecov, only for Python 3.11
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           bash <(curl -s https://codecov.io/bash)
+        if: matrix.python-versions == '3.11'
       - name: Install coveralls
         run: |
           pip3 install --upgrade "coveralls" "coverage[toml]"
-      - name: Upload coverage.xml to coveralls
+      - name: Upload coverage.xml to coveralls, only for Python 3.11
         run: |
           coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        if: matrix.python-versions == '3.11'
