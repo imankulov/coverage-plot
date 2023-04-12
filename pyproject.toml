@@ -43,7 +43,6 @@ black = "^23.3.0"
 flake8 = "^6.0.0"
 mypy = "^1.2.0"
 coverage = {extras = ["toml"], version = "^7.2.3"}
-faker = "^18.4.0"
 
 [tool.coverage.run]
 source = ["coverage_plot"]

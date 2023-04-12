@@ -1,10 +1,7 @@
 import datetime
 from typing import List
 
-import faker
 from attr import field, frozen
-
-fake = faker.Faker()
 
 
 @frozen
@@ -15,8 +12,8 @@ class FakeDeveloper:
     Ref: https://pydriller.readthedocs.io/en/latest/commit.html
     """
 
-    name: str = field(factory=fake.name)  # type: ignore
-    email: str = field(factory=fake.email)  # type: ignore
+    name: str = field(default="John Doe")
+    email: str = field(default="john.doe@example.com")
 
 
 @frozen
@@ -27,7 +24,7 @@ class FakeModification:
     Ref: https://pydriller.readthedocs.io/en/latest/modifications.html
     """
 
-    path: str = field(factory=fake.file_path)  # type: ignore
+    path: str = field(default="src/models.py")
 
     @property
     def old_path(self):
@@ -44,10 +41,8 @@ class FakeCommit:
     Fake object implementing the subset of the interface of pydriller's Commit.
     """
 
-    author: FakeDeveloper = field(factory=FakeDeveloper)  # type: ignore
-    author_date: datetime.datetime = field(
-        factory=fake.date_time_this_year,  # type: ignore
-    )
-    msg: str = field(factory=fake.sentence)  # type: ignore
-    hash: str = field(factory=fake.sha1)  # type: ignore
-    modifications: List[FakeModification] = field(factory=list)  # type: ignore
+    author: FakeDeveloper = field(factory=FakeDeveloper)
+    author_date: datetime.datetime = field(default=datetime.datetime(2023, 1, 1))
+    msg: str = field(default="Add a new feature")
+    hash: str = field(default="1234567890abcdef1234567890abcdef12345678")
+    modifications: List[FakeModification] = field(factory=list)
