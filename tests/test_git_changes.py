@@ -1,5 +1,3 @@
-import faker
-
 from coverage_plot.fake_implementations import (
     FakeCommit,
     FakeDeveloper,
